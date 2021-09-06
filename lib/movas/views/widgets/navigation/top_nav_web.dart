@@ -6,24 +6,26 @@ class TopNavBarWeb extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1200,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            "assets/MetaCheck-logo.svg",
-            height: 22,
-            width: 160,
-          ),
-          Spacer(),
-          Text("niggsa")
-        ],
+    return Center(
+      child: Container(
+        height: 100,
+        constraints: BoxConstraints(maxWidth: 1200),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              "assets/MetaCheck-logo.svg",
+              height: 22,
+              width: 160,
+            ),
+            Spacer(),
+            Text("niggsa")
+          ],
+        ),
       ),
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size(1200, 100);
 }

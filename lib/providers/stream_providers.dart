@@ -4,5 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 List<SingleChildWidget> streams = [
-  Provider<PublishSubject<LocalStorageUpdate>>(create: (c)=>PublishSubject(sync: true),)
+  Provider<PublishSubject<LocalStorageUpdate>>(
+    create: (c) => PublishSubject(sync: true),
+  )
 ];

@@ -19,7 +19,7 @@ class DemoRouteName {
 }
 
 class FadeTransitionRouteBuilder extends PageRouteBuilder {
-  FadeTransitionRouteBuilder(Widget page, {  Duration? duration})
+  FadeTransitionRouteBuilder(Widget page, {Duration? duration})
       : super(
           pageBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation) {
