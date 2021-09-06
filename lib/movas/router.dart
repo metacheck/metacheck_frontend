@@ -1,19 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:metacheck_frontend/movas/views/pages/home_page/home_page.dart';
 import 'package:movas/router/router.dart' as movas;
 
 var router = movas.Router(
   useDemo: true,
   routes: {},
-  demoRoutes: {},
+  initialRoute: DemoRouteName.home,
+  demoRoutes: {
+    DemoRouteName.home: (c) => HomePage(),
+  },
 );
 
 class RouteName {}
 
-class DemoRouteName {}
+class DemoRouteName {
+  static const home = "demohome";
+}
 
 class FadeTransitionRouteBuilder extends PageRouteBuilder {
-  FadeTransitionRouteBuilder(Widget page, {required Duration duration})
+  FadeTransitionRouteBuilder(Widget page, {  Duration? duration})
       : super(
           pageBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation) {
