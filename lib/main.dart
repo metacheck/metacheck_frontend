@@ -3,6 +3,7 @@ import 'package:metacheck_frontend/providers/providers.dart';
 import 'package:movas/config/config.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'movas/router.dart';
 
@@ -22,6 +23,8 @@ class MetaCheck extends StatelessWidget {
       providers: providers,
       child: MaterialApp(
           navigatorKey: navKey,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           title: 'MetaCheck',
           routes: router.calculateAllRoutes,
           initialRoute: router
@@ -29,4 +32,8 @@ class MetaCheck extends StatelessWidget {
           ),
     );
   }
+}
+
+class MCAppLocalizations {
+  static AppLocalizations of(context) => AppLocalizations.of(context)!;
 }

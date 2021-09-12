@@ -1,0 +1,10 @@
+{
+  "logIn": "Log In",
+  "@logIn": {
+    "description": ""
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": ""
+  }
+}
