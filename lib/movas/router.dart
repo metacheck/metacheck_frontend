@@ -1,21 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:metacheck_frontend/main.dart';
+import 'package:metacheck_frontend/movas/actions/scrape_action.dart';
 import 'package:metacheck_frontend/movas/views/pages/home_page/home_page.dart';
-import 'package:movas/router/router.dart' as movas;
+import 'package:metacheck_frontend/movas/views/pages/single_url_export_view/single_url_export_page.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 
-var router = movas.Router(
-  useDemo: true,
-  routes: {},
-  initialRoute: DemoRouteName.home,
-  demoRoutes: {
-    DemoRouteName.home: (c) => HomePage(),
-  },
-);
+import '../helpers/logger.dart';
 
-class RouteName {}
+class AppRoutes {
+  static String homePage = '/home';
+  static String exportPage = '/export';
 
-class DemoRouteName {
-  static const home = "demohome";
+  final routes = [
+    QRoute(name: homePage, path: '/', builder: () => HomePage()),
+    QRoute(
+        name: exportPage,
+        path: 'result/:id',
+        middleware: [ExportMiddleware()],
+        builder: () => SingleUrlExportPage()),
+  ];
+}
+
+class ExportMiddleware extends QMiddleware {
+  @override
+  Future<bool> canPop() async => true;
+  @override
+  Future<String?> redirectGuard(String path) async {
+    return null;
+  }
+
+  @override
+  Future onEnter() {
+    logger.info("on match");
+    var id = QR.params['id'];
+    ScrapeAction.of(navKey.currentContext!).selectCrawlSession(id.toString());
+    return super.onEnter();
+  }
 }
 
 class FadeTransitionRouteBuilder extends PageRouteBuilder {
@@ -38,43 +59,4 @@ class FadeTransitionRouteBuilder extends PageRouteBuilder {
             );
           },
         );
-}
-
-class RouteGenerator {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    final routingData = settings.name!.getRoutingData;
-
-    switch (routingData.route) {
-      //Add route related data here
-
-      default:
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => Scaffold(
-            body: Text("Page not found"),
-          ),
-        );
-    }
-  }
-}
-
-class RoutingData {
-  final String? route;
-  final Map<String, String>? _queryParameters;
-  RoutingData({
-    this.route,
-    Map<String, String>? queryParameters,
-  }) : _queryParameters = queryParameters;
-  operator [](String key) => _queryParameters![key];
-}
-
-extension StringExtension on String {
-  RoutingData get getRoutingData {
-    var uriData = Uri.parse(this);
-    print('queryParameters: ${uriData.queryParameters} path: ${uriData.path}');
-    return RoutingData(
-      queryParameters: uriData.queryParameters,
-      route: uriData.path,
-    );
-  }
 }

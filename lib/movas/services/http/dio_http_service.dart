@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/adapter.dart';
+import 'package:dio/adapter_browser.dart';
 import 'package:dio/dio.dart';
 import 'package:metacheck_frontend/helpers/app_constants.dart';
 import 'package:metacheck_frontend/movas/services/http/requests/base_http_request.dart';
@@ -21,23 +24,14 @@ class DioHttpService extends BaseHttpService {
 
     dio.interceptors.add(
       InterceptorsWrapper(onRequest: (RequestOptions options, handler) async {
-        // If you want to appaend any thing to every request for e.g AuthTokens
-        // then it should be done here
         var token = await refreshToken;
         if (token != null && options.path != "/users/sign_in/")
           options.headers.addAll({"authorization": "Bearer " + token});
 
         return handler.next(options);
       }, onResponse: (Response response, handler) {
-        // Can be helpful for debugging
-
-        print("response:");
         return handler.next(response);
       }, onError: (DioError error, handler) {
-        // Any logic for custom error handling for all requests should be done here
-        // Ideally the api should follow the same format of returning errors for
-        // consistency
-
         print("HTTP Error: ${error.message}");
         return handler.next(error);
       }),
@@ -50,7 +44,7 @@ class DioHttpService extends BaseHttpService {
     T Function(Map<String, dynamic> data)? converter,
   }) async {
     var options = Options(
-      contentType: Headers.formUrlEncodedContentType,
+      contentType: Headers.jsonContentType,
     );
 
     final map = request.toMap();
@@ -88,7 +82,7 @@ class DioHttpService extends BaseHttpService {
     T Function(Map<String, dynamic> data)? converter,
   }) async {
     var options = Options(
-      contentType: Headers.formUrlEncodedContentType,
+      contentType: Headers.jsonContentType,
     );
 
     final map = request.toMap();
@@ -140,7 +134,7 @@ class DioHttpService extends BaseHttpService {
     T Function(Map<String, dynamic> data)? converter,
   }) async {
     var options = Options(
-      contentType: Headers.formUrlEncodedContentType,
+      contentType: Headers.jsonContentType,
     );
 
     final map = request.toMap();
@@ -167,7 +161,7 @@ class DioHttpService extends BaseHttpService {
     T Function(Map<String, dynamic> data)? converter,
   }) async {
     var options = Options(
-      contentType: Headers.formUrlEncodedContentType,
+      contentType: Headers.jsonContentType,
     );
 
     final map = request.toMap();

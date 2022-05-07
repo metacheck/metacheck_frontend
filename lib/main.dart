@@ -1,15 +1,22 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:metacheck_frontend/providers/providers.dart';
 import 'package:movas/config/config.dart';
 import 'package:provider/provider.dart';
-import 'package:url_strategy/url_strategy.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 
+import 'firebase_options.dart';
 import 'movas/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setPathUrlStrategy();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  QR.setUrlStrategy();
   moveAss(MetaCheck());
 }
 
@@ -17,19 +24,22 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 class MetaCheck extends StatelessWidget {
   // This widget is the root of your application.
+  final parser = QRouteInformationParser();
+  final routerDelegate = QRouterDelegate(AppRoutes().routes);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: providers,
-      child: MaterialApp(
-          navigatorKey: navKey,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          title: 'MetaCheck',
-          routes: router.calculateAllRoutes,
-          initialRoute: router
-              .calculateInitialRoute //router.initialRoute, //router.calculateInitialRoute,
-          ),
+      child: MaterialApp.router(
+        key: navKey,
+        routeInformationParser: parser,
+        routerDelegate: routerDelegate,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        title: 'MetaCheck',
+        //router.initialRoute, //router.calculateInitialRoute,
+      ),
     );
   }
 }

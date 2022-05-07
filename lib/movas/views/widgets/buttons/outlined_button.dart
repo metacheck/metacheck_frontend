@@ -19,14 +19,9 @@ class _MetacheckOutlinedButtonState extends State<MetacheckOutlinedButton>
   DecorationTween get decorationTween {
     return DecorationTween(
       begin: BoxDecoration(
-          border: Border.all(
-              width: 2,
-              color: BaseTheme.of(context).primaryColor)),
-      end: BoxDecoration(
-
-          border: Border.all(
-              width: 2,
-              color: Colors.black)),
+          border:
+              Border.all(width: 2, color: OATheme.of(context).primaryColor)),
+      end: BoxDecoration(border: Border.all(width: 2, color: Colors.black)),
     );
   }
 
@@ -50,11 +45,10 @@ class _MetacheckOutlinedButtonState extends State<MetacheckOutlinedButton>
 
   @override
   Widget build(BuildContext context) {
-    final textstyle = BaseTheme.of(context).baseTextStyle;
+    final textstyle = OATheme.of(context).baseTextStyle;
     return InkWell(
       onTap: () {},
       onHover: (hover) {
-        print(hover);
         setState(() {
           hovering = hover;
         });
