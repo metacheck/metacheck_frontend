@@ -13,9 +13,18 @@ class AppRoutes {
   static String exportPage = '/export';
 
   final routes = [
-    QRoute(name: homePage, path: '/', builder: () => HomePage()),
+    QRoute(
+        pageType: QFadePage(
+          transitionDurationMilliseconds: 1000,
+        ),
+        name: homePage,
+        path: '/',
+        builder: () => HomePage()),
     QRoute(
         name: exportPage,
+        pageType: QFadePage(
+          transitionDurationMilliseconds: 1000,
+        ),
         path: 'result/:id',
         middleware: [ExportMiddleware()],
         builder: () => SingleUrlExportPage()),

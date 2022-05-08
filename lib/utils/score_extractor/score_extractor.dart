@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:metacheck_frontend/movas/models/results/single_result.dart';
 
@@ -57,15 +58,15 @@ class MetaTitleScoreExtractor extends ScoreExtractor {
     if (title.length < 30) {
       score = (title.length / 70) * 100;
       type = SectionPassType.bad;
-      text = "bad";
+      text = title.length.toString();
 
       return super.extractScore();
     }
 
     if (title.length > 68) {
-      score = (title.length / 70) * 100;
+      score = 10;
       type = SectionPassType.bad;
-      text = "bad";
+      text = title.length.toString();
 
       return super.extractScore();
     }
@@ -85,9 +86,14 @@ class MetaDescriptionExtractor extends ScoreExtractor {
 
   @override
   SectionPass extractScore() {
-    stake = 30;
+    stake = 5;
     if (desc.length < 2) {
       return super.extractScore();
+    }
+    if (desc.length <= 100) {
+      score = desc.length / 2;
+
+      type = SectionPassType.medium;
     }
     if (desc.length > 100 && desc.length < 155) {
       score = 100;
@@ -98,8 +104,8 @@ class MetaDescriptionExtractor extends ScoreExtractor {
       return super.extractScore();
     }
 
-    if (desc.length > 155 || desc.length <= 100) {
-      score = 50;
+    if (desc.length > 155) {
+      score = 80;
 
       type = SectionPassType.medium;
     }
@@ -119,7 +125,7 @@ class WordCountExtractor extends ScoreExtractor {
   // 500+
   @override
   SectionPass extractScore() {
-    stake = 20;
+    stake = 7;
     if (wordCount == 0) {
       return super.extractScore();
     }
@@ -156,16 +162,75 @@ class WordCountExtractor extends ScoreExtractor {
   }
 }
 
+class InternalLinksExtractor extends ScoreExtractor {
+  final String words;
+  final int linkCount;
+  final int wordCount;
+
+  InternalLinksExtractor(this.words, this.linkCount, this.wordCount);
+  // <200
+  // 201 - 499
+  // 500+
+  @override
+  SectionPass extractScore() {
+    stake = 4;
+    if (linkCount == 0) {
+      return super.extractScore();
+    }
+
+    double factor = 500 / wordCount;
+
+    double linksPer500 = (linkCount * factor);
+    text = "$linksPer500";
+    score = (1.2500 * (linksPer500 * linksPer500) + 29.75 * linksPer500) - 0.25;
+
+    if (score < 50) {
+      type = SectionPassType.bad;
+    }
+    if (score > 50 && score < 65) {
+      type = SectionPassType.medium;
+    }
+    if (score >= 65) {
+      type = SectionPassType.great;
+    }
+
+    return super.extractScore();
+  }
+}
+
 class SubheadingsExtractor extends ScoreExtractor {
   final List<Subheading> subheadings;
   final bool duplicates;
-
-  SubheadingsExtractor(this.subheadings, this.duplicates);
+  final int wordCount;
+  SubheadingsExtractor(this.subheadings, this.duplicates, this.wordCount);
 
   @override
   SectionPass extractScore() {
-    stake = 5;
+    stake = 12;
     score = 100;
+    if (subheadings.isEmpty) {
+      score = 0;
+      type = SectionPassType.bad;
+    } else {
+      int expectedSubheadings = (wordCount / 180).ceil();
+      if (subheadings.length < expectedSubheadings) {
+        score = score * 0.8;
+        if ((subheadings.length * 1.3).ceil() < expectedSubheadings) {
+          type = SectionPassType.medium;
+        }
+      } else {
+        type = SectionPassType.great;
+
+        score = score * max(1, 1.3);
+      }
+    }
+
+    if (duplicates) {
+      type = SectionPassType.medium;
+
+      score = score * 0.8;
+    }
+
     return super.extractScore();
   }
 }
@@ -177,9 +242,10 @@ class FeaturedImageExtractor extends ScoreExtractor {
 
   @override
   SectionPass extractScore() {
-    stake = 5;
+    stake = 15;
     if (image.isNotEmpty && image.contains("http")) {
       score = 100;
+
       type = SectionPassType.great;
     }
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:metacheck_frontend/helpers/app_constants.dart';
@@ -49,8 +51,9 @@ class SingleUrlExportPage extends StatelessWidget {
             subheadingsValid: SectionPass.bad(),
             subheadingsList: [],
             keywordScores: [],
-            keywordsValid: SectionPass.bad(),
-            links: []));
+            keywordsValid: SectionPass.great(),
+            links: [],
+            linksValid: SectionPass.bad()));
     return Scaffold(
       backgroundColor: OATheme.of(context).secondaryBackgoundColor,
       body: Consumer<MyCrawlResultO>(builder: (context, o, _) {
@@ -71,97 +74,105 @@ class SingleUrlExportPage extends StatelessWidget {
                         child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 40),
                       width: AppConstants.DESIGN_WEB_CUTOFF,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Column(
                         children: [
-                          Expanded(
-                              child: Column(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: "URL",
-                                pass: SectionPass.great(),
-                                text: result.url,
-                                subtitle: "Website url",
-                                onTextTap: () {
-                                  launchUrlString(result.url);
-                                },
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: "URL",
+                                    pass: SectionPass.great(),
+                                    text: result.url,
+                                    subtitle: "Website url",
+                                    onTextTap: () {
+                                      launchUrlString(result.url);
+                                    },
+                                  ),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: 'Meta Title',
+                                    pass: result.metaTitleValid,
+                                    text: result.metaTitle,
+                                    subtitle: result.metaTitleSubtitle,
+                                  ),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight,
+                                    title: "Meta Description",
+                                    pass: result.metaDescriptionValid,
+                                    text: result.metaDescription,
+                                    subtitle: result.metaDescriptionSubtitle,
+                                  ),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight * 4 / 3,
+                                    title: 'Featured image',
+                                    pass: result.featuredImageValid,
+                                    textWidget:
+                                        Image.network(result.featuredImagePath),
+                                    subtitle:
+                                        'No customer service, selling fake shoes. ',
+                                  ),
+                                  verticalSpacing,
+                                ],
+                              )),
+                              SizedBox(
+                                width: 30,
                               ),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: 'Meta Title',
-                                pass: result.metaTitleValid,
-                                text: result.metaTitle,
-                                subtitle: result.metaTitleSubtitle,
-                              ),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight,
-                                title: "Meta Description",
-                                pass: result.metaDescriptionValid,
-                                text: result.metaDescription,
-                                subtitle: result.metaDescriptionSubtitle,
-                              ),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight * 4 / 3,
-                                title: 'Featured image',
-                                pass: result.featuredImageValid,
-                                textWidget:
-                                    Image.network(result.featuredImagePath),
-                                subtitle:
-                                    'No customer service, selling fake shoes. ',
-                              ),
-                              verticalSpacing,
-                              KeywordsList(
-                                  result.keywordScores, result.keywordsValid),
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  SeoScoreWidget(result.seoScore.ceil()),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: 'Word count',
+                                    pass: result.wordCountValid,
+                                    text: result.wordCount.toString() +
+                                        " " +
+                                        "WORDS",
+                                    subtitle: result.wordCountSubtitle,
+                                    prefix: Container(
+                                      height: 30,
+                                      width: 30,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: 'H1',
+                                    pass: result.h1Valid,
+                                    prefix: Text(
+                                      "H1",
+                                      style: OATheme.of(context)
+                                          .baseTextStyle
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.green),
+                                    ),
+                                    text: result.h1Text,
+                                    subtitle:
+                                        'No customer service, selling fake shoes. ',
+                                  ),
+                                  verticalSpacing,
+                                  SubheadingsList(result.subheadingsList,
+                                      result.subheadingsValid),
+                                ],
+                              )),
                             ],
-                          )),
-                          SizedBox(
-                            width: 30,
                           ),
-                          Expanded(
-                              child: Column(
-                            children: [
-                              SeoScoreWidget(result.seoScore.ceil()),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: 'Word count',
-                                pass: result.wordCountValid,
-                                text:
-                                    result.wordCount.toString() + " " + "WORDS",
-                                subtitle: result.wordCountSubtitle,
-                                prefix: Container(
-                                  height: 30,
-                                  width: 30,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: 'H1',
-                                pass: result.h1Valid,
-                                prefix: Text(
-                                  "H1",
-                                  style: OATheme.of(context)
-                                      .baseTextStyle
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.green),
-                                ),
-                                text: result.h1Text,
-                                subtitle:
-                                    'No customer service, selling fake shoes. ',
-                              ),
-                              verticalSpacing,
-                              SubheadingsList(result.subheadingsList,
-                                  result.subheadingsValid),
-                            ],
-                          )),
+                          KeywordsList(
+                              result.keywordScores, result.keywordsValid),
+                          verticalSpacing,
+                          InternalLinksList(result.links, result.linksValid),
+                          verticalSpacing,
                         ],
                       ),
                     )),
@@ -190,7 +201,8 @@ class KeywordsList extends StatelessWidget {
           subtitle: 'Here you can see your top scoring keywords',
           texts: [
             ...scores.map((e) => TextsForWidget(
-                text: e.keyword, prefix: Text(e.score.toStringAsFixed(2))))
+                text: e.keyword,
+                prefix: Text((e.score * 100.0).toStringAsFixed(2) + "%")))
           ],
         ),
       ],
@@ -217,6 +229,38 @@ class SubheadingsList extends StatelessWidget {
                   text: e.text,
                   prefix: Text(
                     e.type.toUpperCase(),
+                    style: OATheme.of(context).baseTextStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.green),
+                  ),
+                ))
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class InternalLinksList extends StatelessWidget {
+  final List<InternalLink> links;
+  final pass;
+  InternalLinksList(this.links, this.pass);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        MultipleResultWidget(
+          pass: pass,
+          title: 'INTERNAL LINKS',
+          textBoxHeight: baseHeight / 3,
+          subtitle: 'Subtitle missing',
+          texts: [
+            ...links.map((e) => TextsForWidget(
+                  text: e.href,
+                  prefix: Text(
+                    e.text.toUpperCase(),
                     style: OATheme.of(context).baseTextStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:metacheck_frontend/utils/score_extractor/score_extractor.dart';
 
 class InternalLink {
@@ -8,6 +10,13 @@ class InternalLink {
     required this.href,
     required this.text,
   });
+
+  bool get valid {
+    try {
+      return Uri.tryParse(this.href)!.isAbsolute;
+    } catch (e) {}
+    return false;
+  }
 
   factory InternalLink.fromMap(Map<String, dynamic> map) {
     return InternalLink(
@@ -47,12 +56,15 @@ class PageCrawlResult {
   final String subheadingsSubtitle;
   final SectionPass subheadingsValid;
   final SectionPass keywordsValid;
+  final SectionPass linksValid;
   final List<Subheading> subheadingsList;
   final List<KeywordScore> keywordScores;
   final List<InternalLink> links;
+
   PageCrawlResult({
     required this.id,
     required this.url,
+    required this.linksValid,
     required this.links,
     required this.metaTitleSubtitle,
     required this.keywordsValid,
@@ -90,14 +102,16 @@ class PageCrawlResult {
 
   factory PageCrawlResult.fromMap(Map<String, dynamic> map, {String? id}) {
     var obj = PageCrawlResult(
+      linksValid: SectionPass.bad(),
       links: ((map["links"] ?? []) as List)
           .map((e) => InternalLink.fromMap(e))
+          .where((element) => element.valid)
           .toList(),
       url: map["url"],
       id: id ?? map["id"] ?? "id",
       text: map["text"],
       metaTitleSubtitle: map['metaTitleSubtitle'] ?? "todo missing",
-      keywordsValid: map['keywordsValid'] ?? SectionPass.bad(),
+      keywordsValid: map['keywordsValid'] ?? SectionPass.great(),
       metaTitleValid: map['metaTitleValid'] ?? SectionPass.bad(),
       metaTitle: map['title'] as String,
       metaDescriptionSubtitle: map['metaDescriptionSubtitle'] ?? "todo missing",
@@ -137,6 +151,7 @@ class PageCrawlResult {
     String? text,
     String? metaTitleSubtitle,
     SectionPass? metaTitleValid,
+    SectionPass? linksValid,
     String? metaTitle,
     String? metaDescriptionSubtitle,
     SectionPass? metaDescriptionValid,
@@ -162,6 +177,7 @@ class PageCrawlResult {
       id: id ?? this.id,
       url: url ?? this.url,
       text: text ?? this.text,
+      linksValid: linksValid ?? this.linksValid,
       keywordsValid: keywordsValid ?? this.keywordsValid,
       metaTitleSubtitle: metaTitleSubtitle ?? this.metaTitleSubtitle,
       metaTitleValid: metaTitleValid ?? this.metaTitleValid,
@@ -198,11 +214,16 @@ class PageCrawlResult {
         ).extractScore(),
         MetaTitleScoreExtractor:
             MetaTitleScoreExtractor(metaTitle).extractScore(),
-        SubheadingsExtractor: SubheadingsExtractor(subheadingsList,
-                subheadingsList.any((element) => element.occurences > 1))
+        SubheadingsExtractor: SubheadingsExtractor(
+                subheadingsList,
+                subheadingsList.any((element) => element.occurences > 1),
+                wordCount)
             .extractScore(),
         WordCountExtractor:
             WordCountExtractor(text, links.length, wordCount).extractScore(),
+        InternalLinksExtractor:
+            InternalLinksExtractor(text, links.length, wordCount)
+                .extractScore(),
       });
 
   PageCrawlResult calculateScore() {
@@ -210,6 +231,7 @@ class PageCrawlResult {
 
     return this.copyWith(
         seoScore: getScore(secmap),
+        linksValid: secmap[InternalLinksExtractor],
         featuredImageValid: secmap[FeaturedImageExtractor],
         h1Valid: secmap[H1ScoreExtractor],
         metaDescriptionValid: secmap[MetaDescriptionExtractor],
@@ -220,24 +242,28 @@ class PageCrawlResult {
 
   double getScore(Map<Type, SectionPass> map) {
     int max = map.keys.length * 100;
-    int? total;
+    double? total;
     try {
       double totalstakes =
           map.values.map((e) => e.stake).fold(0, (double a, double b) => a + b);
       double factor = 1;
-      if (total != 100) {
-        factor = 100 / totalstakes;
-      }
+
+      factor = 100 / totalstakes;
 
       final modified = map.values
-          .where((element) => element.stake != 0)
           .map((e) => e.copyWith(stake: e.stake * factor))
-          .map((e) => e.score == 0 ? e.copyWith(score: -e.stake) : e);
+          .map((e) => e);
+
       total = modified
-              .map((e) => e.score * 1 + (e.stake / 100))
+              .map((e) => min(e.score, 100) * 1 + (e.stake / 100))
               .fold(0.0, (double a, double b) => a + b)
               .ceil() *
           100;
+
+      total = modified
+          .map((e) => e.stake * (e.score / 100))
+          .fold(0.0, (double a, double b) => a + b);
+      return total;
     } catch (e) {
       total = null;
       return 0;
