@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:metacheck_frontend/main.dart';
 import 'package:metacheck_frontend/movas/actions/scrape_action.dart';
 import 'package:metacheck_frontend/movas/views/pages/home_page/home_page.dart';
+import 'package:metacheck_frontend/movas/views/pages/sessions_page/crawl_sessions_page.dart';
 import 'package:metacheck_frontend/movas/views/pages/single_url_export_view/single_url_export_page.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -11,19 +12,27 @@ import '../helpers/logger.dart';
 class AppRoutes {
   static String homePage = '/home';
   static String exportPage = '/export';
+  static String sessions = '/sessions';
 
   final routes = [
     QRoute(
         pageType: QFadePage(
-          transitionDurationMilliseconds: 1000,
+          transitionDurationMilliseconds: 300,
         ),
         name: homePage,
         path: '/',
         builder: () => HomePage()),
     QRoute(
+        pageType: QFadePage(
+          transitionDurationMilliseconds: 300,
+        ),
+        name: sessions,
+        path: '/sessions',
+        builder: () => CrawlSessionsPage()),
+    QRoute(
         name: exportPage,
         pageType: QFadePage(
-          transitionDurationMilliseconds: 1000,
+          transitionDurationMilliseconds: 300,
         ),
         path: 'result/:id',
         middleware: [ExportMiddleware()],

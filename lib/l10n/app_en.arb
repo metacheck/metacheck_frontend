@@ -6,5 +6,9 @@
   "signUp": "Sign Up",
   "@signUp": {
     "description": ""
+  },
+  "crawlSessions": "Crawl Sessions",
+  "@crawlSessions": {
+    "description": ""
   }
 }

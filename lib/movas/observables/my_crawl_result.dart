@@ -1,3 +1,4 @@
+import 'package:metacheck_frontend/helpers/logger.dart';
 import 'package:metacheck_frontend/movas/models/results/scrape_results.dart';
 import 'package:metacheck_frontend/movas/models/results/single_result.dart';
 
@@ -24,9 +25,25 @@ class MyCrawlResultO {
 class MyCrawlSessionsO {
   final List<CrawlSession> sessions;
 
-  const MyCrawlSessionsO({
+  MyCrawlSessionsO({
     this.sessions = const [],
-  });
+  }) {
+    // var doing = sessions
+    //     .where((element) => element.scrapeResults.isEmpty)
+    //     .length
+    //     .toString();
+    // logger.info("DOING " + doing);
+    //
+    // if (doing == "0") {
+    //   print("All done at:" + DateTime.now().toString());
+    // }
+    //
+    // logger.info("DONE " +
+    //     sessions
+    //         .where((element) => element.scrapeResults.isNotEmpty)
+    //         .length
+    //         .toString());
+  }
 }
 
 class MyCrawlSessionO {

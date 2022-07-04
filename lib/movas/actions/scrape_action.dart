@@ -14,12 +14,8 @@ class ScrapeAction {
   ScrapeAction(
       this.crawlService, this.scrapeResultsService, this.crawlResultStore);
 
-  Future<String> createScrapeSession() {
-    return crawlService.createScrapeSession(CreateScrapeSessionRequest());
-  }
-
-  Future<void> startScrape(List<String> urls, String id) {
-    return crawlService.startScrapeSession(StartCrawlSessionRequest(id, urls));
+  Future<String> startScrape(List<String> urls) {
+    return crawlService.startScrapeSession(StartCrawlSessionRequest(urls));
   }
 
   factory ScrapeAction.of(context) => ScrapeAction(

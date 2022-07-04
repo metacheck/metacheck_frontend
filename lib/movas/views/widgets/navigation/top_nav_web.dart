@@ -17,6 +17,7 @@ class TopNavBarWeb extends StatelessWidget implements PreferredSizeWidget {
         color: OATheme.of(context).secondaryBackgoundColor,
         height: 100,
         constraints: BoxConstraints(maxWidth: AppConstants.DESIGN_WEB_CUTOFF),
+        margin: EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -27,17 +28,33 @@ class TopNavBarWeb extends StatelessWidget implements PreferredSizeWidget {
               child: SvgPicture.asset(
                 "assets/MetaCheck-logo.svg",
                 height: 22,
-                width: 160,
+                // width: 160,
               ),
             ),
             Spacer(),
-            MetacheckOutlinedButton(
-                AppLocalizations.of(context)!.logIn.toUpperCase()),
             SizedBox(
               width: 24,
             ),
             MetacheckOutlinedButton(
-                AppLocalizations.of(context)!.signUp.toUpperCase()),
+              AppLocalizations.of(context)!.crawlSessions.toUpperCase(),
+              onTap: () {
+                QR.toName(AppRoutes.sessions);
+              },
+            ),
+            SizedBox(
+              width: 24,
+            ),
+            MetacheckOutlinedButton(
+              AppLocalizations.of(context)!.logIn.toUpperCase(),
+              onTap: () {},
+            ),
+            SizedBox(
+              width: 24,
+            ),
+            MetacheckOutlinedButton(
+              AppLocalizations.of(context)!.signUp.toUpperCase(),
+              onTap: () {},
+            ),
           ],
         ),
       ),

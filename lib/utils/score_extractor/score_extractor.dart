@@ -5,9 +5,15 @@ import 'package:metacheck_frontend/movas/models/results/single_result.dart';
 
 abstract class ScoreExtractor {
   SectionPassType type = SectionPassType.bad;
-  double score = 0;
+  double _score = 0;
   String text = "";
   double stake = 0;
+
+  double get score => _score;
+
+  set score(double value) {
+    _score = min(110, value);
+  }
 
   SectionPass extractScore() {
     return SectionPass(score: score, text: text, stake: stake, type: type);
@@ -62,14 +68,21 @@ class MetaTitleScoreExtractor extends ScoreExtractor {
 
       return super.extractScore();
     }
-
-    if (title.length > 68) {
-      score = 10;
+    if (title.length >= 120) {
+      score = 30;
       type = SectionPassType.bad;
       text = title.length.toString();
 
       return super.extractScore();
     }
+    if (title.length > 68) {
+      score = 80;
+      type = SectionPassType.medium;
+      text = title.length.toString();
+
+      return super.extractScore();
+    }
+
     return super.extractScore();
   }
 }
@@ -86,7 +99,7 @@ class MetaDescriptionExtractor extends ScoreExtractor {
 
   @override
   SectionPass extractScore() {
-    stake = 5;
+    stake = 8;
     if (desc.length < 2) {
       return super.extractScore();
     }
@@ -193,6 +206,7 @@ class InternalLinksExtractor extends ScoreExtractor {
     if (score >= 65) {
       type = SectionPassType.great;
     }
+    score = min(score, 100);
 
     return super.extractScore();
   }
@@ -242,10 +256,10 @@ class FeaturedImageExtractor extends ScoreExtractor {
 
   @override
   SectionPass extractScore() {
-    stake = 15;
+    stake = 5;
     if (image.isNotEmpty && image.contains("http")) {
       score = 100;
-
+      text = image;
       type = SectionPassType.great;
     }
 

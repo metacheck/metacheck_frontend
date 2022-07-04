@@ -58,7 +58,7 @@ class PageCrawlResult {
   final SectionPass keywordsValid;
   final SectionPass linksValid;
   final List<Subheading> subheadingsList;
-  final List<KeywordScore> keywordScores;
+  final List<KeywordScore>? keywordScores;
   final List<InternalLink> links;
 
   PageCrawlResult({
@@ -87,7 +87,7 @@ class PageCrawlResult {
     required this.subheadingsSubtitle,
     required this.subheadingsValid,
     required this.subheadingsList,
-    required this.keywordScores,
+    this.keywordScores,
   });
 
   @override
@@ -132,14 +132,17 @@ class PageCrawlResult {
       subheadingsList: (map['headings'])
           .map<Subheading>((e) => Subheading.fromMap(e))
           .toList(),
-      keywordScores: ((map["keyword_score"] ?? {}) as Map<String, dynamic>)
-          .entries
-          .map((e) => KeywordScore(
-              keyword: e.key, score: double.tryParse(e.value.toString()) ?? 0))
-          .toList()
-          .where((element) => element.score > 0.5)
-          .toList()
-        ..sort((a, b) => b.score.compareTo(a.score)),
+      keywordScores: map["keyword_score"] == null
+          ? null
+          : (((map["keyword_score"] ?? {}) as Map<String, dynamic>)
+              .entries
+              .map((e) => KeywordScore(
+                  keyword: e.key,
+                  score: double.tryParse(e.value.toString()) ?? 0))
+              .toList()
+              .where((element) => element.score > 0.5)
+              .toList()
+            ..sort((a, b) => b.score.compareTo(a.score))),
     );
     obj = obj.calculateScore();
     return obj;
@@ -242,43 +245,26 @@ class PageCrawlResult {
 
   double getScore(Map<Type, SectionPass> map) {
     int max = map.keys.length * 100;
-    double? total;
+    late double total;
     try {
       double totalstakes =
           map.values.map((e) => e.stake).fold(0, (double a, double b) => a + b);
       double factor = 1;
-
-      factor = 100 / totalstakes;
+      if (totalstakes < 100) {
+        factor = 100 / totalstakes;
+      }
 
       final modified = map.values
           .map((e) => e.copyWith(stake: e.stake * factor))
           .map((e) => e);
 
       total = modified
-              .map((e) => min(e.score, 100) * 1 + (e.stake / 100))
-              .fold(0.0, (double a, double b) => a + b)
-              .ceil() *
-          100;
-
-      total = modified
           .map((e) => e.stake * (e.score / 100))
           .fold(0.0, (double a, double b) => a + b);
-      return total;
+      return min(total, 100);
     } catch (e) {
-      total = null;
       return 0;
     }
-    if (total == null || total == 0) return 0;
-
-    print("total : $total");
-    print("max : $max");
-    var r = total / max;
-
-    if (r > 100) {
-      print("THIS IS NOT SUPPOSED TO HAPPEN");
-      r = 100;
-    }
-    return r;
   }
 }
 

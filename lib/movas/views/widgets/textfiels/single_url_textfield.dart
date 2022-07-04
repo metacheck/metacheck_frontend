@@ -17,7 +17,8 @@ class SingleUrlTextField extends StatelessWidget {
       borderSide: BorderSide(color: OATheme.of(context).primaryColor, width: 3),
     );
     return Container(
-      width: 444,
+      constraints: BoxConstraints(maxWidth: 444),
+      margin: EdgeInsets.symmetric(horizontal: 20),
       child: TextField(
         cursorColor: Colors.grey,
         style: OATheme.of(context).baseTextStyle.copyWith(fontSize: 18),

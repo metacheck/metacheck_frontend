@@ -30,6 +30,7 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+
   <script type="module">
 
   // Import the functions you need from the SDKs you need
@@ -77,9 +78,8 @@
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
     function loadMainDartJs() {
-      if (scriptLoaded) {
-        return;
-      }
+    console.log("isuss")
+
       scriptLoaded = true;
       var scriptTag = document.createElement('script');
       scriptTag.src = 'main.dart.js';
@@ -137,5 +137,9 @@
       loadMainDartJs();
     }
   </script>
+  <script src="gsheets.js"></script>
+  <script async defer src="https://apis.google.com/js/api.js" onLoad="gapiLoaded()"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onLoad="gisLoaded()"></script>
+
 </body>
 </html>

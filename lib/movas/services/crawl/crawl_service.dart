@@ -16,8 +16,11 @@ class CrawlService {
     return id;
   }
 
-  Future<void> startScrapeSession(
+  Future<String> startScrapeSession(
       StartCrawlSessionRequest sessionRequest) async {
-    await httpService.post(request: sessionRequest, converter: (data) => data);
+    Map<String, dynamic> resp = await httpService.post(
+        request: sessionRequest, converter: (data) => data);
+
+    return resp["id_instance"].toString();
   }
 }

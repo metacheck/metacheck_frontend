@@ -4,8 +4,8 @@ import 'package:metacheck_frontend/movas/views/theme/theme.dart';
 
 class MetacheckOutlinedButton extends StatefulWidget {
   final String text;
-
-  MetacheckOutlinedButton(this.text);
+  final VoidCallback onTap;
+  MetacheckOutlinedButton(this.text, {required this.onTap});
 
   @override
   State<MetacheckOutlinedButton> createState() =>
@@ -47,7 +47,7 @@ class _MetacheckOutlinedButtonState extends State<MetacheckOutlinedButton>
   Widget build(BuildContext context) {
     final textstyle = OATheme.of(context).baseTextStyle;
     return InkWell(
-      onTap: () {},
+      onTap: widget.onTap,
       onHover: (hover) {
         setState(() {
           hovering = hover;

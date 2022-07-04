@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,15 @@ void main() async {
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
+
 class MetaCheck extends StatelessWidget {
   // This widget is the root of your application.
   final parser = QRouteInformationParser();
@@ -32,6 +42,7 @@ class MetaCheck extends StatelessWidget {
     return MultiProvider(
       providers: providers,
       child: MaterialApp.router(
+        scrollBehavior: MyCustomScrollBehavior(),
         key: navKey,
         routeInformationParser: parser,
         routerDelegate: routerDelegate,

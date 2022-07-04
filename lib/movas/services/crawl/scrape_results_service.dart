@@ -30,7 +30,7 @@ class ScrapeResultsService {
         .where("user_id", isEqualTo: userId)
         .snapshots()
         .listen((event) {
-      logger.info(event);
+      logger.info("len " + event.docs.length.toString());
       scrapeResultsE$.add(ScrapeResultsE.fromList(event.docs));
     });
   }

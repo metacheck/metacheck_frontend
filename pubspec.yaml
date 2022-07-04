@@ -29,7 +29,7 @@ dependencies:
   flutter_svg: ^1.0.3
   firebase_core: ^1.16.0
   cloud_firestore: ^3.1.14
-  collection: 1.15.0
+  collection: ^1.16.0
   movas:
     git:
       url: https://github.com/digitalnomadacademy/movas.git
@@ -39,6 +39,7 @@ dependencies:
   hive_flutter: ^1.1.0
   dio: ^4.0.6
   url_launcher: ^6.1.0
+  flutter_expandable_table: 1.0.2
   url_strategy:
   intl:
   flutter_localizations:
