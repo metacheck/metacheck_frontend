@@ -7,14 +7,14 @@ import 'package:metacheck_frontend/movas/models/results/scrape_results.dart';
 import 'package:metacheck_frontend/movas/models/user/user.dart';
 import 'package:movas/movas.dart';
 
-class ScrapeResultsService {
+class MetaDescriptionResultsService {
   late final FirebaseFirestore firestore;
   final PublishSubject<UserE?> userE$;
-  final PublishSubject<ScrapeResultsE> scrapeResultsE$;
+  final PublishSubject<GeneratedDescriptionsE> resultsE$;
 
   String userId = "leo";
   StreamSubscription? scrapeResultsListener;
-  ScrapeResultsService(this.userE$, this.scrapeResultsE$) {
+  MetaDescriptionResultsService(this.userE$, this.resultsE$) {
     firestore = FirebaseFirestore.instance;
 
     userE$.listen((value) {
@@ -30,18 +30,17 @@ class ScrapeResultsService {
   void _removeListener() {
     scrapeResultsListener?.cancel();
     scrapeResultsListener = null;
-    scrapeResultsE$.add(ScrapeResultsE.fromList([]));
+    resultsE$.add(GeneratedDescriptionsE.fromList([]));
   }
 
   void _setupListenerForUser() {
     _removeListener();
     scrapeResultsListener = firestore
-        .collection("results")
+        .collection("descriptions")
         .where("user_id", isEqualTo: userId)
         .snapshots()
         .listen((event) {
-      logger.info("len " + event.docs.length.toString());
-      scrapeResultsE$.add(ScrapeResultsE.fromList(event.docs));
+      resultsE$.add(GeneratedDescriptionsE.fromList(event.docs));
     });
   }
 }

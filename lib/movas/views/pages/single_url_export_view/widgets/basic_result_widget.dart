@@ -7,7 +7,6 @@ import 'package:metacheck_frontend/movas/views/theme/theme.dart';
 
 class BasicResultWidget extends StatelessWidget {
   final String title;
-  final String subtitle;
   final String? text;
   final double textBoxHeight;
   final SectionPass pass;
@@ -16,7 +15,6 @@ class BasicResultWidget extends StatelessWidget {
   final VoidCallback? onTextTap;
   const BasicResultWidget({
     required this.title,
-    required this.subtitle,
     this.text,
     required this.textBoxHeight,
     required this.pass,
@@ -27,7 +25,7 @@ class BasicResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = OATheme.of(context).baseTextStyle;
+    final base = Theme.of(context).textTheme.bodyText2!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,7 +50,7 @@ class BasicResultWidget extends StatelessWidget {
         SizedBox(
           height: 10,
         ),
-        SelectableText(subtitle),
+        SelectableText(pass.text),
         SizedBox(
           height: 8,
         ),
@@ -89,7 +87,7 @@ class BasicResultWidget extends StatelessWidget {
           width: double.maxFinite,
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: OATheme.of(context).backgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: child);
     }
@@ -141,7 +139,7 @@ class MultipleResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = OATheme.of(context).baseTextStyle;
+    final base = Theme.of(context).textTheme.bodyText2!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -214,7 +212,7 @@ class MultipleResultWidget extends StatelessWidget {
         width: useWrap ? null : double.maxFinite,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: OATheme.of(context).backgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: child);
   }

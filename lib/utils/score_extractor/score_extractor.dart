@@ -6,8 +6,14 @@ import 'package:metacheck_frontend/movas/models/results/single_result.dart';
 abstract class ScoreExtractor {
   SectionPassType type = SectionPassType.bad;
   double _score = 0;
-  String text = "";
+  String _text = "";
   double stake = 0;
+
+  String get text => _text.isEmpty ? "Missing" : _text;
+
+  set text(String value) {
+    _text = value;
+  }
 
   double get score => _score;
 

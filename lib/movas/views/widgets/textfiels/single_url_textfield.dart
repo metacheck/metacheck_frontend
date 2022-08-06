@@ -14,14 +14,17 @@ class SingleUrlTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final border = OutlineInputBorder(
-      borderSide: BorderSide(color: OATheme.of(context).primaryColor, width: 3),
+      borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 3),
     );
     return Container(
       constraints: BoxConstraints(maxWidth: 444),
       margin: EdgeInsets.symmetric(horizontal: 20),
       child: TextField(
+        onSubmitted: (val) {
+          onTap.call();
+        },
         cursorColor: Colors.grey,
-        style: OATheme.of(context).baseTextStyle.copyWith(fontSize: 18),
+        style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 18),
         controller: textEditingController,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
@@ -30,7 +33,7 @@ class SingleUrlTextField extends StatelessWidget {
               child: Container(
                   height: 60,
                   width: 50,
-                  color: OATheme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColor,
                   child: Icon(
                     Icons.search,
                     size: 30,

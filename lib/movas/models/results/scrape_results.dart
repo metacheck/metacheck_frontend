@@ -13,6 +13,12 @@ class ScrapeResultsE {
   }
 }
 
+enum CrawlState {
+  finished,
+  running,
+  error,
+}
+
 class CrawlSession {
   final List<PageCrawlResult> scrapeResults;
   final String id;
@@ -37,7 +43,7 @@ class CrawlSession {
   }
 
   String get shortName {
-    if (scrapeResults.isEmpty)
+    if (state == CrawlState.running)
       return "DOING " + id;
     else
       return scrapeResults.map((e) => e.url).join(", ");
@@ -54,7 +60,17 @@ class CrawlSession {
         max;
   }
 
-  String get state => endTime == null ? "Running" : "Finished";
+  CrawlState get state {
+    CrawlState st = CrawlState.running;
+    if (endTime != null) {
+      st = CrawlState.finished;
+    }
+
+    if (this.scrapeResults.isEmpty && endTime != null) {
+      st = CrawlState.error;
+    }
+    return st;
+  }
 
   @override
   bool operator ==(Object other) =>

@@ -14,7 +14,7 @@ class WordCountWidget extends StatelessWidget {
       height: baseHeight,
       width: double.maxFinite,
       decoration: BoxDecoration(
-          border: Border.all(color: OATheme.of(context).primaryColor)),
+          border: Border.all(color: Theme.of(context).primaryColor)),
     );
   }
 }

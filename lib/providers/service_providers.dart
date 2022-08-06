@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:metacheck_frontend/movas/services/auth/auth_service.dart';
+import 'package:metacheck_frontend/movas/services/auth/firebase_auth_service.dart';
 import 'package:metacheck_frontend/movas/services/crawl/crawl_service.dart';
 import 'package:metacheck_frontend/movas/services/crawl/scrape_results_service.dart';
+import 'package:metacheck_frontend/movas/services/descriptions/descriptions_service.dart';
 import 'package:metacheck_frontend/movas/services/http/base_http_service.dart';
 import 'package:metacheck_frontend/movas/services/http/dio_http_service.dart';
 import 'package:metacheck_frontend/movas/services/local_storage/hive_local_storage_service.dart';
@@ -18,6 +21,10 @@ List<SingleChildWidget> services = [
     lazy: false,
     create: (context) => HiveLocalStorageService(StaticProvider.of(context)),
   ),
+  Provider<AuthService>(
+    lazy: false,
+    create: (context) => FirebaseAuthService(StaticProvider.of(context)),
+  ),
   Provider<BaseHttpService>(
     lazy: false,
     create: (context) => DioHttpService(
@@ -32,6 +39,13 @@ List<SingleChildWidget> services = [
   Provider<ScrapeResultsService>(
     lazy: false,
     create: (context) => ScrapeResultsService(
+      StaticProvider.of(context),
+      StaticProvider.of(context),
+    ),
+  ),
+  Provider<MetaDescriptionResultsService>(
+    lazy: false,
+    create: (context) => MetaDescriptionResultsService(
       StaticProvider.of(context),
       StaticProvider.of(context),
     ),

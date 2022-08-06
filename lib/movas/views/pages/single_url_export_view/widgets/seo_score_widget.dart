@@ -10,7 +10,7 @@ class SeoScoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = OATheme.of(context).baseTextStyle;
+    final base = Theme.of(context).textTheme.bodyText2;
 
     return Container(
       height: baseHeight,
@@ -43,7 +43,7 @@ class SeoScoreWidget extends StatelessWidget {
         ],
       ),
       decoration: BoxDecoration(
-          border: Border.all(color: OATheme.of(context).primaryColor)),
+          border: Border.all(color: Theme.of(context).primaryColor)),
     );
   }
 }

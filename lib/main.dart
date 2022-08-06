@@ -4,6 +4,9 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:metacheck_frontend/movas/ui/ui_consts.dart';
 import 'package:metacheck_frontend/providers/providers.dart';
 import 'package:movas/config/config.dart';
 import 'package:provider/provider.dart';
@@ -33,9 +36,9 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 }
 
 class MetaCheck extends StatelessWidget {
-  // This widget is the root of your application.
   final parser = QRouteInformationParser();
-  final routerDelegate = QRouterDelegate(AppRoutes().routes);
+  final routerDelegate =
+      QRouterDelegate(AppRoutes().routes, initPath: AppRoutes.splash);
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +46,16 @@ class MetaCheck extends StatelessWidget {
       providers: providers,
       child: MaterialApp.router(
         scrollBehavior: MyCustomScrollBehavior(),
-        key: navKey,
+
+        key: navKey, theme: UI.themes.light(context),
         routeInformationParser: parser,
         routerDelegate: routerDelegate,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          FormBuilderLocalizations.delegate,
+          ...AppLocalizations.localizationsDelegates
+        ],
         supportedLocales: AppLocalizations.supportedLocales,
         title: 'MetaCheck',
         //router.initialRoute, //router.calculateInitialRoute,

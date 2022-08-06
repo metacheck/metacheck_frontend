@@ -33,9 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final base = OATheme.of(context).baseTextStyle;
     return Scaffold(
-      backgroundColor: OATheme.of(context).secondaryBackgoundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                color: OATheme.of(context).secondaryBackgoundColor,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -60,8 +59,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         "Welcome to on site analyzer!",
                         textAlign: TextAlign.center,
-                        style: base.copyWith(
-                            fontSize: 48, fontWeight: FontWeight.w900),
+                        style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
                     SizedBox(
@@ -74,27 +72,29 @@ class _HomePageState extends State<HomePage> {
                           hintText: 'Type the URL here',
                           textEditingController: controller,
                           onTap: () async {
-                            loadingActionHandler(context, Future(() async {
-                              var urls = (controller.text)
-                                  .split(",")
-                                  .map((e) => e.trim())
-                                  .toList();
-                              List<String> formatted = [];
-                              for (var url in urls) {
-                                var u = url.toString();
-                                u.replaceAll("http://", "");
-                                if (u.startsWith("http") == false) {
-                                  u = "https://" + u;
-                                }
-                                formatted.add(u);
+                            var urls = (controller.text)
+                                .split(",")
+                                .map((e) => e.trim())
+                                .toList();
+                            List<String> formatted = [];
+                            for (var url in urls) {
+                              var u = url.toString();
+                              u.replaceAll("http://", "");
+                              if (u.startsWith("http") == false) {
+                                u = "https://" + u;
                               }
-
-                              var s = await ScrapeAction.of(context)
-                                  .startScrape(formatted);
-                              logger.info(s);
-                              return Future.value(s);
-                            })).then((value) => QR.toName(AppRoutes.exportPage,
-                                params: {"id": value.toString()}));
+                              formatted.add(u);
+                            }
+                            if (formatted.isNotEmpty) {
+                              loadingActionHandler(context, Future(() async {
+                                var s = await ScrapeAction.of(context)
+                                    .startScrape(formatted);
+                                logger.info(s);
+                                return Future.value(s);
+                              })).then((value) => QR.toName(
+                                  AppRoutes.exportPage,
+                                  params: {"id": value.toString()}));
+                            }
                           },
                         ),
                         if (false)

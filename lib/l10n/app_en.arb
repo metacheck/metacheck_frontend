@@ -7,6 +7,10 @@
   "@signUp": {
     "description": ""
   },
+  "logout": "Log out",
+  "@logout": {
+    "description": ""
+  },
   "crawlSessions": "Crawl Sessions",
   "@crawlSessions": {
     "description": ""

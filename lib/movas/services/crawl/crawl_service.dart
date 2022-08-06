@@ -1,4 +1,5 @@
 import 'package:metacheck_frontend/movas/services/crawl/requests/crawl_request.dart';
+import 'package:metacheck_frontend/movas/services/crawl/requests/generate_meta_desc_request.dart';
 import 'package:metacheck_frontend/movas/services/crawl/requests/start_crawl_session_request.dart';
 import 'package:metacheck_frontend/movas/services/http/base_http_service.dart';
 
@@ -14,6 +15,12 @@ class CrawlService {
         request: scrapeSessionRequest, converter: (data) => data);
     id = resp["id"];
     return id;
+  }
+
+  Future<String> startMetaDescGeneration(MetaDescGenRequest req) async {
+    Map<String, dynamic> resp =
+        await httpService.post(request: req, converter: (data) => data);
+    return "";
   }
 
   Future<String> startScrapeSession(

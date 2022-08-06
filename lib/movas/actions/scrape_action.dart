@@ -1,5 +1,9 @@
+import 'package:metacheck_frontend/extension/provider_ext.dart';
 import 'package:metacheck_frontend/movas/models/results/single_result.dart';
+import 'package:metacheck_frontend/movas/observables/my_crawl_result.dart';
+import 'package:metacheck_frontend/movas/observables/user_observable.dart';
 import 'package:metacheck_frontend/movas/services/crawl/crawl_service.dart';
+import 'package:metacheck_frontend/movas/services/crawl/requests/generate_meta_desc_request.dart';
 import 'package:metacheck_frontend/movas/services/crawl/requests/start_crawl_session_request.dart';
 import 'package:metacheck_frontend/movas/services/crawl/scrape_results_service.dart';
 import 'package:metacheck_frontend/movas/stores/crawl_result_store.dart';
@@ -15,7 +19,15 @@ class ScrapeAction {
       this.crawlService, this.scrapeResultsService, this.crawlResultStore);
 
   Future<String> startScrape(List<String> urls) {
-    return crawlService.startScrapeSession(StartCrawlSessionRequest(urls));
+    return crawlService
+        .startScrapeSession(StartCrawlSessionRequest(urls, get<UserO>().uid!));
+  }
+
+  Future<String> startMetaDescGeneration() {
+    return crawlService.startMetaDescGeneration(MetaDescGenRequest(
+        get<MyCrawlResultO>().pageCrawlResult!.id,
+        get<MyCrawlSessionO>().session!.id,
+        get<UserO>().uid!));
   }
 
   factory ScrapeAction.of(context) => ScrapeAction(

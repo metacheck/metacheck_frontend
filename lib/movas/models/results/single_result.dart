@@ -30,21 +30,21 @@ class PageCrawlResult {
   final String id;
   final String url;
 
-  final String metaTitleSubtitle;
+  // final String metaTitleSubtitle;
   final SectionPass metaTitleValid;
   final String metaTitle;
 
-  final String metaDescriptionSubtitle;
+  // final String metaDescriptionSubtitle;
   final SectionPass metaDescriptionValid;
   final String metaDescription;
 
-  final String featuredImageSubtitle;
+  // final String featuredImageSubtitle;
   final String featuredImagePath;
   final SectionPass featuredImageValid;
 
   final double seoScore;
 
-  final String wordCountSubtitle;
+  // final String wordCountSubtitle;
   final SectionPass wordCountValid;
   final int wordCount;
   final String text;
@@ -53,7 +53,7 @@ class PageCrawlResult {
   final SectionPass h1Valid;
   final String h1Text;
 
-  final String subheadingsSubtitle;
+  // final String subheadingsSubtitle;
   final SectionPass subheadingsValid;
   final SectionPass keywordsValid;
   final SectionPass linksValid;
@@ -66,25 +66,25 @@ class PageCrawlResult {
     required this.url,
     required this.linksValid,
     required this.links,
-    required this.metaTitleSubtitle,
+    // required this.metaTitleSubtitle,
     required this.keywordsValid,
     required this.metaTitleValid,
     required this.metaTitle,
     required this.text,
-    required this.metaDescriptionSubtitle,
+    // required this.metaDescriptionSubtitle,
     required this.metaDescriptionValid,
     required this.metaDescription,
-    required this.featuredImageSubtitle,
+    // required this.featuredImageSubtitle,
     required this.featuredImagePath,
     required this.featuredImageValid,
     required this.seoScore,
-    required this.wordCountSubtitle,
+    // required this.wordCountSubtitle,
     required this.wordCountValid,
     required this.wordCount,
     required this.h1Subtitle,
     required this.h1Valid,
     required this.h1Text,
-    required this.subheadingsSubtitle,
+    // required this.subheadingsSubtitle,
     required this.subheadingsValid,
     required this.subheadingsList,
     this.keywordScores,
@@ -110,24 +110,24 @@ class PageCrawlResult {
       url: map["url"],
       id: id ?? map["id"] ?? "id",
       text: map["text"],
-      metaTitleSubtitle: map['metaTitleSubtitle'] ?? "todo missing",
+      // metaTitleSubtitle: map['metaTitleSubtitle'] ?? "todo missing",
       keywordsValid: map['keywordsValid'] ?? SectionPass.great(),
       metaTitleValid: map['metaTitleValid'] ?? SectionPass.bad(),
       metaTitle: map['title'] as String,
-      metaDescriptionSubtitle: map['metaDescriptionSubtitle'] ?? "todo missing",
+      // metaDescriptionSubtitle: map['metaDescriptionSubtitle'] ?? "todo missing",
       metaDescriptionValid: map['metaDescriptionValid'] ?? SectionPass.bad(),
       metaDescription: map['description'] as String,
-      featuredImageSubtitle: map['featuredImageSubtitle'] ?? "todo missing",
+      // featuredImageSubtitle: map['featuredImageSubtitle'] ?? "todo missing",
       featuredImagePath: (map['featuredImage'] as String),
       featuredImageValid: map['featuredImageValid'] ?? SectionPass.bad(),
       seoScore: map['seoScore'] ?? 69,
-      wordCountSubtitle: map['wordCountSubtitle'] ?? "todo missing",
+      // wordCountSubtitle: map['wordCountSubtitle'] ?? "todo missing",
       wordCountValid: map['wordCountValid'] ?? SectionPass.bad(),
       wordCount: map['wordCount'] as int,
       h1Subtitle: map['h1Subtitle'] ?? "missing",
       h1Valid: map['h1Valid'] ?? SectionPass.bad(),
       h1Text: map['heading'] as String,
-      subheadingsSubtitle: map['subheadingsSubtitle'] ?? "todo missing",
+      // subheadingsSubtitle: map['subheadingsSubtitle'] ?? "todo missing",
       subheadingsValid: map['subheadingsValid'] ?? SectionPass.bad(),
       subheadingsList: (map['headings'])
           .map<Subheading>((e) => Subheading.fromMap(e))
@@ -182,25 +182,18 @@ class PageCrawlResult {
       text: text ?? this.text,
       linksValid: linksValid ?? this.linksValid,
       keywordsValid: keywordsValid ?? this.keywordsValid,
-      metaTitleSubtitle: metaTitleSubtitle ?? this.metaTitleSubtitle,
       metaTitleValid: metaTitleValid ?? this.metaTitleValid,
       metaTitle: metaTitle ?? this.metaTitle,
-      metaDescriptionSubtitle:
-          metaDescriptionSubtitle ?? this.metaDescriptionSubtitle,
       metaDescriptionValid: metaDescriptionValid ?? this.metaDescriptionValid,
       metaDescription: metaDescription ?? this.metaDescription,
-      featuredImageSubtitle:
-          featuredImageSubtitle ?? this.featuredImageSubtitle,
       featuredImagePath: featuredImagePath ?? this.featuredImagePath,
       featuredImageValid: featuredImageValid ?? this.featuredImageValid,
       seoScore: seoScore ?? this.seoScore,
-      wordCountSubtitle: wordCountSubtitle ?? this.wordCountSubtitle,
       wordCountValid: wordCountValid ?? this.wordCountValid,
       wordCount: wordCount ?? this.wordCount,
       h1Subtitle: h1Subtitle ?? this.h1Subtitle,
       h1Valid: h1Valid ?? this.h1Valid,
       h1Text: h1Text ?? this.h1Text,
-      subheadingsSubtitle: subheadingsSubtitle ?? this.subheadingsSubtitle,
       subheadingsValid: subheadingsValid ?? this.subheadingsValid,
       subheadingsList: subheadingsList ?? this.subheadingsList,
       keywordScores: keywordScores ?? this.keywordScores,
@@ -334,6 +327,25 @@ class SectionPass {
       score: score ?? this.score,
       text: text ?? this.text,
       stake: stake ?? this.stake,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'type': this.type.name,
+      'score': this.score.toString(),
+      'text': this.text,
+      'stake': this.stake.toString(),
+    };
+  }
+
+  factory SectionPass.fromMap(Map<String, dynamic> map) {
+    return SectionPass(
+      type: SectionPassType.values
+          .firstWhere((element) => element.name == map["type"]),
+      score: double.parse(map["score"]),
+      text: map['text'] as String,
+      stake: double.parse(map['stake']),
     );
   }
 }

@@ -17,7 +17,7 @@ class CrawlSessionsPage extends StatefulWidget {
 }
 
 class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
-  Color get primaryColor => OATheme.of(context).secondaryBackgoundColor;
+  Color get primaryColor => Theme.of(context).backgroundColor;
   Color accentColor = Color(0xFF0d2026);
   TextStyle textStyle = TextStyle(color: Colors.black);
   TextStyle textStyleSubItems = TextStyle(color: Colors.grey);
@@ -35,7 +35,7 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
               ? null
               : DateFormat('yyyy-MM-dd – kk:mm').format(e.endTime!).toString())
           .toList(),
-      "State": o.sessions.map((e) => e.state).toList()
+      "State": o.sessions.map((e) => e.state.toString()).toList()
     };
     var columns = values.keys;
 
@@ -43,7 +43,7 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
     int ROW_COUNT = o.sessions.length;
 
     var decoration = BoxDecoration(
-        border: Border.all(color: OATheme.of(context).accentColor),
+        border: Border.all(color: Theme.of(context).accentColor),
         color: primaryColor);
     //Creation header
     ExpandableTableHeader header = ExpandableTableHeader(
@@ -79,7 +79,7 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
                     decoration: decoration,
                     child: Center(
                         child: Text(
-                      o.sessions.elementAt(rowIndex).id,
+                      o.sessions.elementAt(rowIndex).shortName,
                       maxLines: 1,
                       style: textStyle,
                     ))),
@@ -97,18 +97,25 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
                   : null,
               children: List<Widget>.generate(
                   COLUMN_COUNT,
-                  (columnIndex) => Container(
-                      decoration: decoration,
-                      child: Center(
-                          child: Text(
-                        values.entries
-                                .elementAt(columnIndex)
-                                .value
-                                .elementAt(rowIndex)
-                                ?.toString() ??
-                            '',
-                        style: textStyle,
-                      )))),
+                  (columnIndex) => InkWell(
+                        onTap: () {
+                          QR.toName(AppRoutes.exportPage, params: {
+                            "id": o.sessions.elementAt(rowIndex).id.toString()
+                          });
+                        },
+                        child: Container(
+                            decoration: decoration,
+                            child: Center(
+                                child: Text(
+                              values.entries
+                                      .elementAt(columnIndex)
+                                      .value
+                                      .elementAt(rowIndex)
+                                      ?.toString() ??
+                                  '',
+                              style: textStyle,
+                            ))),
+                      )),
             ));
 
     return ExpandableTable(
@@ -122,9 +129,8 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final base = OATheme.of(context).baseTextStyle;
     return Scaffold(
-      backgroundColor: OATheme.of(context).secondaryBackgoundColor,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -132,6 +138,10 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
           Consumer<MyCrawlSessionsO>(
               // stream: null,
               builder: (context, o, _) {
+            if (o.sessions.isEmpty) {
+              return Center(child: Text("You have no sessions started"));
+            }
+
             return ScrollConfiguration(
               behavior:
                   ScrollConfiguration.of(context).copyWith(scrollbars: false),
@@ -146,7 +156,7 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
                     child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: OATheme.of(context).accentColor,
+                                color: Theme.of(context).accentColor,
                                 width: 2)),
                         child: _buildExpandableTable(o)),
                   ),
@@ -154,7 +164,6 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
               ),
             );
           }),
-          Text("txt"),
         ],
       ),
     );
