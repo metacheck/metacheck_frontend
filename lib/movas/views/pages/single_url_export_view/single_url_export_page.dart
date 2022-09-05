@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:metacheck_frontend/helpers/app_constants.dart';
+import 'package:metacheck_frontend/movas/actions/google_sheet_action.dart';
 import 'package:metacheck_frontend/movas/actions/scrape_action.dart';
 import 'package:metacheck_frontend/movas/models/generated_descriptions/generated_descriptions.dart';
 import 'package:metacheck_frontend/movas/models/results/scrape_results.dart';
@@ -102,185 +103,211 @@ class SingleUrlExportPage extends StatelessWidget {
     return Expanded(
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (session.session?.scrapeResults != null)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: session.session!.scrapeResults
-                    .mapIndexed((i, e) => InkWell(
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (session.session?.scrapeResults != null)
+                Container(
+                  height: 80,
+                  constraints:
+                      BoxConstraints(maxWidth: AppConstants.DESIGN_WEB_CUTOFF),
+                  child: Row(
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: session.session!.scrapeResults.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final PageCrawlResult item =
+                              session.session!.scrapeResults[index];
+                          return ActionChip(
+                              backgroundColor: o.pageCrawlResult == item
+                                  ? Theme.of(context).primaryColor
+                                  : null,
+                              onPressed: () {
+                                ScrapeAction.of(context)
+                                    .selectSingleResult(item);
+                              },
+                              label: Text(item.url));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(
+                            width: 8,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Container(
+                        width: 150,
+                        child: MetacheckOutlinedButton(
+                          text: "EXPORT",
                           onTap: () {
-                            ScrapeAction.of(context).selectSingleResult(e);
+                            GoogleSheetA.of(context)
+                                .createSheet(session.session!);
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: o.pageCrawlResult?.url == e.url
-                                      ? Colors.teal
-                                      : null,
-                                  border: Border.all(
-                                      width: 2,
-                                      color: Theme.of(context).accentColor)),
-                              height: 44,
-                              width: 44,
-                              child: Center(child: Text(i.toString())),
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-            Expanded(
-              child: SingleChildScrollView(
-                  child: Container(
-                constraints:
-                    BoxConstraints(maxWidth: AppConstants.DESIGN_WEB_CUTOFF),
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    Wrap(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 40,
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  (AppConstants.DESIGN_WEB_CUTOFF / 2) - 25),
-                          child: Selector<MetaDescO, GeneratedDescription?>(
-                              selector: (context, next) {
-                            return next.get(
-                                o.pageCrawlResult!.id, session.session!.id);
-                          }, builder: (context, o, _) {
-                            return Column(
-                              children: [
-                                BasicResultWidget(
-                                  textBoxHeight: baseHeight / 3,
-                                  title: "URL",
-                                  pass: SectionPass.great(),
-                                  text: result.url,
-                                  onTextTap: () {
-                                    launchUrlString(result.url);
-                                  },
-                                ),
-                                verticalSpacing,
-                                BasicResultWidget(
-                                  textBoxHeight: baseHeight / 3,
-                                  title: 'Meta Title',
-                                  pass: result.metaTitleValid,
-                                  text: result.metaTitle,
-                                ),
-                                verticalSpacing,
-                                Stack(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        width: 160,
-                                        child: Center(
-                                          child: buildButton(o),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Expanded(
+                child: SingleChildScrollView(
+                    child: Container(
+                  constraints:
+                      BoxConstraints(maxWidth: AppConstants.DESIGN_WEB_CUTOFF),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      Wrap(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 40,
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    (AppConstants.DESIGN_WEB_CUTOFF / 2) - 25),
+                            child: Selector<MetaDescO, GeneratedDescription?>(
+                                selector: (context, next) {
+                              return next.get(
+                                  o.pageCrawlResult!.id, session.session!.id);
+                            }, builder: (context, o, _) {
+                              return Column(
+                                children: [
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: "URL",
+                                    pass: SectionPass.great(),
+                                    text: result.url,
+                                    onTextTap: () {
+                                      launchUrlString(result.url);
+                                    },
+                                  ),
+                                  verticalSpacing,
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight / 3,
+                                    title: 'Meta Title',
+                                    pass: result.metaTitleValid,
+                                    text: result.metaTitle,
+                                  ),
+                                  verticalSpacing,
+                                  Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Container(
+                                          width: 160,
+                                          child: Center(
+                                            child: buildButton(o, context),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    BasicResultWidget(
-                                      textBoxHeight: baseHeight,
-                                      title: "Meta Description",
-                                      pass: result.metaDescriptionValid,
-                                      text: result.metaDescription,
-                                    ),
-                                  ],
-                                ),
-                                verticalSpacing,
-                                if (o?.state == DescriptionState.complete)
-                                  Column(
-                                    children: [
                                       BasicResultWidget(
                                         textBoxHeight: baseHeight,
-                                        prefix: Icon(Icons.computer_outlined),
-                                        title: "Generated Meta Description",
-                                        pass: SectionPass.great().copyWith(
-                                            text:
-                                                "Meta description generated with our AI"),
-                                        text: o!.summary,
+                                        title: "Meta Description",
+                                        pass: result.metaDescriptionValid,
+                                        text: result.metaDescription,
                                       ),
-                                      verticalSpacing,
                                     ],
                                   ),
+                                  verticalSpacing,
+                                  if (o?.state == DescriptionState.complete)
+                                    Column(
+                                      children: [
+                                        BasicResultWidget(
+                                          textBoxHeight: baseHeight,
+                                          prefix: Icon(Icons.computer_outlined),
+                                          title: "Generated Meta Description",
+                                          pass: SectionPass.great().copyWith(
+                                              text:
+                                                  "Meta description generated with our AI"),
+                                          text: o!.summary,
+                                        ),
+                                        verticalSpacing,
+                                      ],
+                                    ),
+                                  BasicResultWidget(
+                                    textBoxHeight: baseHeight * 4 / 3,
+                                    title: 'Featured image',
+                                    pass: result.featuredImageValid,
+                                    textWidget:
+                                        Image.network(result.featuredImagePath),
+                                  ),
+                                  verticalSpacing,
+                                ],
+                              );
+                            }),
+                          ),
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    (AppConstants.DESIGN_WEB_CUTOFF / 2) - 25),
+                            child: Column(
+                              children: [
+                                SeoScoreWidget(result.seoScore.ceil()),
+                                verticalSpacing,
                                 BasicResultWidget(
-                                  textBoxHeight: baseHeight * 4 / 3,
-                                  title: 'Featured image',
-                                  pass: result.featuredImageValid,
-                                  textWidget:
-                                      Image.network(result.featuredImagePath),
+                                  textBoxHeight: baseHeight / 3,
+                                  title: 'Word count',
+                                  pass: result.wordCountValid,
+                                  text: result.wordCount.toString() +
+                                      " " +
+                                      "WORDS",
+                                  prefix: Container(
+                                    height: 30,
+                                    width: 30,
+                                    color: Colors.red,
+                                  ),
                                 ),
                                 verticalSpacing,
+                                BasicResultWidget(
+                                  textBoxHeight: baseHeight / 3,
+                                  title: 'H1',
+                                  pass: result.h1Valid,
+                                  prefix: Text(
+                                    "H1",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(color: Colors.green),
+                                  ),
+                                  text: result.h1Text,
+                                ),
+                                verticalSpacing,
+                                SubheadingsList(result.subheadingsList,
+                                    result.subheadingsValid),
                               ],
-                            );
-                          }),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  (AppConstants.DESIGN_WEB_CUTOFF / 2) - 25),
-                          child: Column(
-                            children: [
-                              SeoScoreWidget(result.seoScore.ceil()),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: 'Word count',
-                                pass: result.wordCountValid,
-                                text:
-                                    result.wordCount.toString() + " " + "WORDS",
-                                prefix: Container(
-                                  height: 30,
-                                  width: 30,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              verticalSpacing,
-                              BasicResultWidget(
-                                textBoxHeight: baseHeight / 3,
-                                title: 'H1',
-                                pass: result.h1Valid,
-                                prefix: Text(
-                                  "H1",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4!
-                                      .copyWith(color: Colors.green),
-                                ),
-                                text: result.h1Text,
-                              ),
-                              verticalSpacing,
-                              SubheadingsList(result.subheadingsList,
-                                  result.subheadingsValid),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    verticalSpacing,
-                    if (result.keywordScores != null)
-                      KeywordsList(result.keywordScores!, result.keywordsValid),
-                    verticalSpacing,
-                    InternalLinksList(result.links, result.linksValid),
-                    verticalSpacing,
-                  ],
-                ),
-              )),
-            ),
-          ],
+                        ],
+                      ),
+                      verticalSpacing,
+                      if (result.keywordScores != null)
+                        KeywordsList(
+                            result.keywordScores!, result.keywordsValid),
+                      verticalSpacing,
+                      InternalLinksList(result.links, result.linksValid),
+                      verticalSpacing,
+                    ],
+                  ),
+                )),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildButton(GeneratedDescription? o) {
+  Widget buildButton(GeneratedDescription? o, context) {
     if (o == null) {
       return MetacheckOutlinedButton(
         text: 'GENERATE',
-        onTap: () {},
+        onTap: () {
+          ScrapeAction.of(context).startMetaDescGeneration();
+        },
       );
     }
     if (o.state == DescriptionState.running) {

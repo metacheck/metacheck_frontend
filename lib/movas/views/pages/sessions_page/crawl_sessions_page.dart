@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +36,7 @@ class _CrawlSessionsPageState extends State<CrawlSessionsPage> {
               ? null
               : DateFormat('yyyy-MM-dd – kk:mm').format(e.endTime!).toString())
           .toList(),
-      "State": o.sessions.map((e) => e.state.toString()).toList()
+      "State": o.sessions.map((e) => e.state.name).toList()
     };
     var columns = values.keys;
 

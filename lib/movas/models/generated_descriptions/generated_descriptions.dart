@@ -11,7 +11,7 @@ class GeneratedDescriptionsE {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> list) {
     return GeneratedDescriptionsE(
         descriptions: list
-            .map((e) => GeneratedDescription.fromMap(e.data(), e.id))
+             .map((e) => GeneratedDescription.fromMap(e.data(), e.id))
             .toList());
   }
 }

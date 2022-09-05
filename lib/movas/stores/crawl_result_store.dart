@@ -15,7 +15,9 @@ class CrawlResultStore
     add(MyCrawlSessionO());
     add(MyCrawlSessionsO());
     scrapeResultsE$.listen((value) {
-      add(MyCrawlSessionsO(sessions: value.crawlSessions.toList()));
+      add(MyCrawlSessionsO(
+          sessions: value.crawlSessions.toList()
+            ..sort((a, b) => b.startTime.compareTo(a.startTime))));
       _latest = value;
       _updateObservable();
     });

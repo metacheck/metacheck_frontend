@@ -27,6 +27,7 @@ class SingleUrlTextField extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 18),
         controller: textEditingController,
         decoration: InputDecoration(
+            hintText: hintText,
             contentPadding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
             suffixIcon: InkWell(
               onTap: onTap,

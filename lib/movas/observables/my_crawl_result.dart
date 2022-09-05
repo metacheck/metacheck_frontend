@@ -44,6 +44,24 @@ class MyCrawlSessionsO {
     //         .length
     //         .toString());
   }
+
+  MyCrawlSessionsO copyWith({
+    List<CrawlSession>? sessions,
+  }) {
+    return MyCrawlSessionsO(
+      sessions: sessions ?? this.sessions,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MyCrawlSessionsO &&
+          runtimeType == other.runtimeType &&
+          sessions == other.sessions;
+
+  @override
+  int get hashCode => sessions.hashCode;
 }
 
 class MyCrawlSessionO {

@@ -32,7 +32,7 @@ class TopNavBarWeb extends StatelessWidget implements PreferredSizeWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
+                  InkWell(
                     onTap: () {
                       QR.toName(AppRoutes.homePage);
                     },

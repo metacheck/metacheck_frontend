@@ -15,4 +15,18 @@ class UserO {
     this.uid,
     this.userState = UserState.loggedOut,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserO &&
+          runtimeType == other.runtimeType &&
+          userState == other.userState &&
+          name == other.name &&
+          email == other.email &&
+          uid == other.uid;
+
+  @override
+  int get hashCode =>
+      userState.hashCode ^ name.hashCode ^ email.hashCode ^ uid.hashCode;
 }

@@ -9,7 +9,18 @@ abstract class ScoreExtractor {
   String _text = "";
   double stake = 0;
 
-  String get text => _text.isEmpty ? "Missing" : _text;
+  String get text {
+    switch (type) {
+      case SectionPassType.bad:
+        return "This needs to be improved";
+      case SectionPassType.medium:
+        return "This is good.";
+      case SectionPassType.great:
+        return "Absolutely great!";
+    }
+
+    return _text.isEmpty ? "Missing" : _text;
+  }
 
   set text(String value) {
     _text = value;

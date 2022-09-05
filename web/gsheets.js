@@ -62,7 +62,7 @@ function handleAuthClick(sheetData) {
     var url = ""
     await    gapi.client.sheets.spreadsheets.create({
             properties: {
-                title: "isus te jeba krvavi"
+                title: "Export"
             }
         }).then(async(response) => {
             var spreadsheetId = response.result.spreadsheetId;
